@@ -22,6 +22,7 @@ import static spark.Spark.post;
 import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
@@ -142,6 +143,11 @@ public class Signin {
           GoogleTokenResponse tokenResponse =
               new GoogleAuthorizationCodeTokenRequest(TRANSPORT, JSON_FACTORY,
                   CLIENT_ID, CLIENT_SECRET, code, "postmessage").execute();
+
+          // You can read the Google user ID in the ID token.
+          // This sample does not use the user ID.
+          GoogleIdToken idToken = tokenResponse.parseIdToken();
+          String gplus_id = idToken.getPayload().getUserId();
 
           // Store the token in the session for later use.
           request.session().attribute("token", tokenResponse.toString());
