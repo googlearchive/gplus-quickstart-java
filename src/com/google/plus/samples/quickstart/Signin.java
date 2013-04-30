@@ -22,6 +22,7 @@ import static spark.Spark.post;
 import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
@@ -135,7 +136,6 @@ public class Signin {
         // implement this best practice.
         //request.session().removeAttribute("state");
 
-        String gPlusId = request.queryParams("gplus_id");
         String code = request.body();
 
         try {
@@ -143,33 +143,12 @@ public class Signin {
           GoogleTokenResponse tokenResponse =
               new GoogleAuthorizationCodeTokenRequest(TRANSPORT, JSON_FACTORY,
                   CLIENT_ID, CLIENT_SECRET, code, "postmessage").execute();
-          // Create a credential representation of the token data.
-          GoogleCredential credential = new GoogleCredential.Builder()
-              .setJsonFactory(JSON_FACTORY)
-              .setTransport(TRANSPORT)
-              .setClientSecrets(CLIENT_ID, CLIENT_SECRET).build()
-              .setFromTokenResponse(tokenResponse);
 
-          // Check that the token is valid.
-          Oauth2 oauth2 = new Oauth2.Builder(
-              TRANSPORT, JSON_FACTORY, credential).build();
-          Tokeninfo tokenInfo = oauth2.tokeninfo()
-              .setAccessToken(credential.getAccessToken()).execute();
-          // If there was an error in the token info, abort.
-          if (tokenInfo.containsKey("error")) {
-            response.status(401);
-            return GSON.toJson(tokenInfo.get("error").toString());
-          }
-          // Make sure the token we got is for the intended user.
-          if (!tokenInfo.getUserId().equals(gPlusId)) {
-            response.status(401);
-            return GSON.toJson("Token's user ID doesn't match given user ID.");
-          }
-          // Make sure the token we got is for our app.
-          if (!tokenInfo.getIssuedTo().equals(CLIENT_ID)) {
-            response.status(401);
-            return GSON.toJson("Token's client ID does not match app's.");
-          }
+          // You can read the Google user ID in the ID token.
+          // This sample does not use the user ID.
+          GoogleIdToken idToken = tokenResponse.parseIdToken();
+          String gplus_id = idToken.getPayload().getUserId();
+
           // Store the token in the session for later use.
           request.session().attribute("token", tokenResponse.toString());
           return GSON.toJson("Successfully connected user.");
