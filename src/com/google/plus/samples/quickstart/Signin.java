@@ -120,7 +120,7 @@ public class Signin {
         // Only connect a user that is not already connected.
         String tokenData = request.session().attribute("token");
         if (tokenData != null) {
-          response.status(400);
+          response.status(200);
           return GSON.toJson("Current user is already connected.");
         }
         // Ensure that this is no request forgery going on, and that the user
