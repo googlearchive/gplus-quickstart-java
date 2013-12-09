@@ -38,6 +38,7 @@ import org.mortbay.jetty.servlet.SessionHandler;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -83,8 +84,8 @@ public class Signin {
 
   static {
     try {
-      Reader reader = new FileReader("client_secrets.json");
-      clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, reader);
+	  InputStream is = new FileInputStream("client_secrets.json");
+      clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, is);
     } catch (IOException e) {
       throw new Error("No client_secrets.json found", e);
     }
@@ -208,7 +209,7 @@ public class Signin {
         // You can read the Google user ID in the ID token.
         // This sample does not use the user ID.
         GoogleIdToken idToken = tokenResponse.parseIdToken();
-        String gplusId = idToken.getPayload().getSubject();
+		String gplusId = idToken.getPayload().getUserId();
 
         // Store the token in the session for later use.
         request.getSession().setAttribute("token", tokenResponse.toString());
