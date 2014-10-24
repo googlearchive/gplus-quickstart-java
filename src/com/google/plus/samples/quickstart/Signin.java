@@ -35,6 +35,8 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.jetty.servlet.SessionHandler;
 
+import org.apache.log4j.BasicConfigurator;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -111,6 +113,7 @@ public class Signin {
    * @throws Exception from Jetty if the component fails to start
    */
   public static void main(String[] args) throws Exception {
+    BasicConfigurator.configure();
     Server server = new Server(4567);
     ServletHandler servletHandler = new ServletHandler();
     SessionHandler sessionHandler = new SessionHandler();
