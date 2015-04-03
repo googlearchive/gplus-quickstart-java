@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Google Inc. All Rights Reserved.
+ * Copyright 2015 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.mortbay.jetty.servlet.SessionHandler;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -132,6 +133,18 @@ public class Signin {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
+      // This check serves the signin button image
+      if ("/signin_button.png".equals(request.getServletPath())) {
+        File staticFile = new File("./static/signin_button.png");
+        FileInputStream fileStream = new FileInputStream(staticFile);
+        byte []buf = new byte[(int)staticFile.length()];
+        fileStream.read(buf);
+        response.setContentType("image/png");
+        response.getOutputStream().write(buf);
+        response.setStatus(HttpServletResponse.SC_OK);
+        return;
+      }
+
       // This check prevents the "/" handler from handling all requests by default
       if (!"/".equals(request.getServletPath())) {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -229,7 +242,7 @@ public class Signin {
      *
      * @param inputStream the InputStream to be read.
      * @return the content of the InputStream as a ByteArrayOutputStream.
-     * @throws IOException 
+     * @throws IOException
      */
     static void getContent(InputStream inputStream, ByteArrayOutputStream outputStream)
         throws IOException {
@@ -251,7 +264,7 @@ public class Signin {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
       response.setContentType("application/json");
-      
+
       // Only disconnect a connected user.
       String tokenData = (String) request.getSession().getAttribute("token");
       if (tokenData == null) {
