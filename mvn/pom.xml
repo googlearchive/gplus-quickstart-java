@@ -51,6 +51,14 @@
 
 	<build>
 		<plugins>
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-resources-plugin</artifactId>
+		        <version>2.6</version>
+		        <configuration>
+		          <encoding>UTF-8</encoding>
+		        </configuration>
+		    </plugin>
 			<!-- compiler -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
