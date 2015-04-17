@@ -1,8 +1,8 @@
-# Google+ Java Quickstart
+# Google+ Java Quickstart with maven
 
 Prepare
 -------
-Copy/paste client_secrets.json.example to client_secrets.json
+Copy/paste client_secrets.json.example to client_secrets.json and put your credentials
 
 Build
 -----
